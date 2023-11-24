@@ -13,7 +13,7 @@ const GeneralApp = () => {
         width: "calc(100vw-100px)",
         backgroundColor: "#000"
       }}>
-        <Conversation />
+        {/* <Conversation /> */}
       </Box>
       {/* <Chats /> */}
 
