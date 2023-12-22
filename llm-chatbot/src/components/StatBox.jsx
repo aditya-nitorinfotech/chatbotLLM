@@ -11,7 +11,7 @@ const StatBox = ({ title, subtitle, icon, progress, increase, subtitle2,decrease
   const colors = tokens(theme.palette.mode);
 
   return (
-    <Box width="100%" m="0 30px" flexDirection={"column"} >
+    <Box width="100%" m="0 25px" flexDirection={"column"} >
       <Box display="flex" flexDirection={"row"} justifyContent="space-evenly">
        
         

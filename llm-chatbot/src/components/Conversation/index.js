@@ -19,6 +19,9 @@ import axios from "axios"
 import { fontWeight } from "@mui/system";
 import { makeStyles } from "@material-ui/core/styles";
 // import TextField from "@material-ui/core/TextField";
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -63,6 +66,8 @@ const Conversation = () => {
         { from: "bot", text: "Hello! I am the Nitor Chabot, Please ask any question!" },
     ]);
 
+    const [saveList, setSaveList] = useState()
+
     const [inputMessage, setInputMessage] = useState("");
     const [pageLoad, setPageLoad] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -85,6 +90,10 @@ const Conversation = () => {
     const handleSelectionChange = (event) => {
         console.log("value", event.target.value)
         setValue(event.target.value);
+        setInputT("0")
+        setOutputT("0")
+        setResponseT(0)
+        setTotalT("0")
         // window.location.reload()
     };
 
@@ -142,6 +151,15 @@ const Conversation = () => {
             ))
 
 
+    const basicAlerts = () => {
+        return (
+
+            <Alert severity="success">Your conversation is saved successfully </Alert>
+
+        );
+    }
+
+
     const handleAutoSend = async (data) => {
         handleOpen()
         console.log("inside auto method", data)
@@ -160,6 +178,7 @@ const Conversation = () => {
             }
         }
         setIsLoading(true)
+        let user = localStorage.getItem("userId")
         // if (!autoQ.trim().length) {
         //     return;
         // }
@@ -189,7 +208,7 @@ const Conversation = () => {
 
         if (value == 1) {
             console.log("inside 1", data)
-            response = await axios.post("/health",
+            response = await axios.post({ target: "http://10.11.13.102:5000/health" },
                 { "text": `${data}` },
                 {
                     headers: {
@@ -201,6 +220,7 @@ const Conversation = () => {
                 handleClose()
             else {
                 setHMessages((old) => [...old, { from: "bot", text: "Sorry, there was an error" }]);
+
                 handleClose()
             }
 
@@ -209,7 +229,7 @@ const Conversation = () => {
         else if (value == 2) {
             console.log("sending finance request")
             console.log("inside 2", data)
-            response = await axios.post("/finance",
+            response = await axios.post({ target: "http://10.11.13.102:5000/finance" },
                 { "text": `${data}` },
                 {
                     headers: {
@@ -229,7 +249,7 @@ const Conversation = () => {
         else if (value == 3) {
             console.log("sending general request")
             console.log("inside 3", data)
-            response = await axios.post("/general",
+            response = await axios.post("http://10.11.13.102:5000/general",
                 { "text": `${data}` },
                 // {
                 //     headers: {
@@ -267,8 +287,10 @@ const Conversation = () => {
 
         if (value == 1) {
             setTimeout(() => {
-
+                if (response?.data.result != "The question is not related to healthcare.")
+                    setSaveList({ userId: user, qadata: { question: Array.from(hMessages.values()).pop(), answer: response?.data.result, type: "healthcare", favourite: 0 }, inputTokens: "", outputTokens: "", totalTokens: "", responseTime: "" });
                 setHMessages((old) => [...old, { from: "bot", text: response?.data.result }]);
+
 
             }, 1000);
         }
@@ -402,7 +424,10 @@ const Conversation = () => {
         console.log("inside method", inputMessage)
         let url = 'https://nitorhealth.community.saturnenterprise.io'
         let urlCORS = `https://` + `${url}`
-        let token = "deployment-4835a3af01624b49a626b7c8afa3b6e8"
+        // let token = "deployment-4835a3af01624b49a626b7c8afa3b6e8"
+        let user = localStorage.getItem("userId")
+        let token = localStorage.getItem("token")
+
 
 
         // let data = { "text": "What are symptoms of Covid-19?" }
@@ -424,6 +449,7 @@ const Conversation = () => {
         if (value == 1) {
             console.log("inside 1")
             setHMessages((old) => [...old, { from: "me", text: data }]);
+
 
         }
         if (value == 2) {
@@ -454,13 +480,14 @@ const Conversation = () => {
 
         if (value == 1) {
             console.log("inside 1", data)
-            response = await axios.post("/health",
+            response = await axios.post("http://10.11.13.102:5000/health",
                 { "text": `${data}` },
-                {
-                    headers: {
-                        'Authorization': `Bearer` + ` ${token}`
-                    }
-                })
+                // {
+                //     headers: {
+                //         'Authorization': `Bearer` + ` ${token}`
+                //     }
+                // })
+            )
             if (response)
                 handleClose()
             else {
@@ -473,13 +500,14 @@ const Conversation = () => {
         else if (value == 2) {
             console.log("sending finance request")
             console.log("inside 2", data)
-            response = await axios.post("/finance",
+            response = await axios.post("http://10.11.13.102:5000/finance",
                 { "text": `${data}` },
-                {
-                    headers: {
-                        'Authorization': `Bearer` + ` ${token}`
-                    }
-                })
+                // {
+                //     headers: {
+                //         'Authorization': `Bearer` + ` ${token}`
+                //     }
+                // }
+            )
             if (response)
                 handleClose()
             else {
@@ -497,7 +525,7 @@ const Conversation = () => {
         else if (value == 3) {
             console.log("sending general request")
             console.log("inside 3", data)
-            response = await axios.post("/general",
+            response = await axios.post("http://10.11.13.102:5000/general",
                 { "text": `${data}` },
                 // {
                 //     headers: {
@@ -537,14 +565,59 @@ const Conversation = () => {
 
 
         if (value == 1) {
+
+
+            setSaveList({ userId: user, question: data, answer: response?.data.result, model: "healthcare", favourite: false, inputTokens: response?.data.input_token_used, outputTokens: response?.data.output_token_used, totalTokens: response?.data.total_token_used, responseTime: response?.data.execution_time });
+            const request = { "userId": user, "question": data, "answer": response?.data.result, "model": "Healthcare", "favourite": false, "inputTokens": response?.data.input_token_used, "outputTokens": response?.data.output_token_used, "totalTokens": response?.data.total_token_used, "responseTime": response?.data.execution_time }
+            // const request = { userId: "657b3a19e8ff286e40bafdb9", question: data, answer: response?.data.result, inputTokens: response?.data.input_token_used, outputTokens: response?.data.output_token_used, totalTokens: response?.data.total_token_used, responseTime: response?.data.execution_time }
+
             setTimeout(() => {
                 setHMessages((old) => [...old, { from: "bot", text: response?.data.result }]);
-            }, 1000);
+            }, 1200)
+            console.log("sending request", request)
+            let resp = await axios.post("http://localhost:3000/qa/save", request,
+                {
+                    headers: {
+                        'Authorization': `Bearer` + ` ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+
+            )
+            console.log("response received, saved", resp)
+            if (resp) {
+                return (
+
+                    <Alert severity="success">
+                        <AlertTitle>Success</AlertTitle>
+                        This is a success alert — <strong>conversation saved!</strong>
+                    </Alert>
+
+                );
+            }
+
+
+
         }
         else if (value == 2) {
+            setSaveList({ userId: user, question: data, answer: response?.data.result, model: "Finance", favourite: false, inputTokens: response?.data.input_token_used, outputTokens: response?.data.output_token_used, totalTokens: response?.data.total_token_used, responseTime: response?.data.execution_time });
+            const request = { "userId": user, "question": data, "answer": response?.data.result, "model": "Finance", "favourite": false, "inputTokens": response?.data.input_token_used, "outputTokens": response?.data.output_token_used, "totalTokens": response?.data.total_token_used, "responseTime": response?.data.execution_time }
             setTimeout(() => {
                 setRMessages((old) => [...old, { from: "bot", text: response?.data.result }]);
-            }, 1000);
+            }, 1200);
+            console.log("sending request", request)
+            let resp = await axios.post("http://localhost:3000/qa/save", request,
+                {
+                    headers: {
+                        'Authorization': `Bearer` + ` ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+
+            )
+            console.log("response received, saved", resp)
+            if (resp)
+                basicAlerts()
         }
         else if (value == 3) {
             let result;
@@ -670,12 +743,14 @@ const Conversation = () => {
     }
 
     const [open, setOpen] = React.useState(false);
+    const [onLoad, setOnLoad] = React.useState(false)
     const handleClose = () => {
         setOpen(false);
     };
     const handleOpen = () => {
         setOpen(true);
     };
+
 
     const AlwaysScrollToBottom = () => {
         const elementRef = useRef();
@@ -684,6 +759,15 @@ const Conversation = () => {
         }, [isLoading]);
         return <div ref={elementRef} />;
     };
+
+    useEffect(() => {
+
+        setOnLoad(true)
+        setTimeout(() => {
+            setOnLoad(false)
+        }, 3000)
+
+    }, [])
 
 
 
@@ -976,13 +1060,14 @@ const Conversation = () => {
 
                             }
                         })}
-                    {/* <Backdrop
+                    <Backdrop
                         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                        open={open}
-                        onClick={handleClose}
-                    > */}
+                        open={onLoad}
+                        onClick={{}}
+                    >
+                    </Backdrop>
                     {open ? <CircularProgress size={25} color="primary" onClick={handleClose} /> : (<></>)}
-                    {/* </Backdrop> */}
+
                     <AlwaysScrollToBottom />
 
                 </Box>
@@ -1013,6 +1098,7 @@ const Conversation = () => {
                         <><Box p={0.1} sx={{ width: "auto", height: "auto", borderRadius: 7, textAlign: "center", alignItems: "center", backgroundColor: "#F8FAFF", color: "#F8FAFF" }}>
                             <Button onClick={() => {
                                 setHMessages((old) => [...old, { from: "me", text: "What is HIV and its symptoms?" }]);
+
                                 handleAutoSend("What is HIV and its symptoms?")
 
                             }}>
@@ -1024,6 +1110,7 @@ const Conversation = () => {
                         </Box><Box p={0.1} sx={{ width: "auto", height: "auto", borderRadius: 7, textAlign: "center", alignItems: "center", backgroundColor: "#F8FAFF", color: "#F8FAFF" }}>
                                 <Button onClick={() => {
                                     setHMessages((old) => [...old, { from: "me", text: "What is Covid-19 disease?" }]);
+
                                     handleAutoSend("What is Covid-19 disease?")
                                 }}>
                                     <Typography sx={{ color: "#000" }} fontSize={12}>
@@ -1034,6 +1121,7 @@ const Conversation = () => {
                                 <Button onClick={() => {
 
                                     setHMessages((old) => [...old, { from: "me", text: "What is health insurance?" }]);
+
                                     handleAutoSend("What is health insurance?")
                                 }}>
                                     <Typography sx={{ color: "#000" }} fontSize={12}>
@@ -1136,7 +1224,7 @@ const Conversation = () => {
                     />
                 </Stack>
                 <Stack direction="row" sx={{ marginTop: "1%", justifyContent: "space-between" }}>
-                    <h5>Response Time: {responseT.toFixed(2)} seconds</h5>
+                    <h5>Response Time: {responseT?.toFixed(2)} seconds</h5>
                     <h5>Input Tokens: {inputT}</h5>
                     <h5>Output Tokens: {outputT}</h5>
                     <h5>Total Tokens Used: {totalT}/{value == 1 || value == 2 ? 200 : 1000}</h5>

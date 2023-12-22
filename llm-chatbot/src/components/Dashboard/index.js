@@ -32,6 +32,19 @@ import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
 import { tokens } from "../../theme"
+import InsightsSharpIcon from '@mui/icons-material/InsightsSharp';
+import MovingIcon from '@mui/icons-material/Moving';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Chart } from "react-google-charts"
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+
+
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -127,6 +140,99 @@ const Dashboard = () => {
             },
         },
     }));
+
+
+    const pieData = [
+        ["Tokens", "Usage Breakdown"],
+        ["Health", 42],
+        ["Finance", 33],
+        ["General", 20],
+        ["Others", 5],
+
+    ];
+
+    const pieOptions = {
+        title: "Total Tokens by Model",
+        is3D: true,
+        fontSize: 14,
+
+    };
+
+
+    const mockTransactions = [
+        {
+            txId: "01e4dsa",
+            user: "jackdower",
+            date: "How does health insurance coverage work?",
+            token: "114",
+            type: "Health",
+            time: "2023-10-23",
+        },
+        {
+            txId: "01e4dsa",
+            user: "jackdower",
+            date: "What is financial management?",
+            token: "173",
+            type: "Finance",
+            time: "2023-10-23",
+        },
+        {
+            txId: "01e4dsa",
+            user: "jackdowner",
+            date: "Ideas to plan a newsletter?",
+            token: "454",
+            type: "General",
+            time: "2023-10-22",
+        },
+        {
+            txId: "51034szv",
+            user: "stevebower",
+            date: "What is hospital management?",
+            token: "532",
+            type: "General",
+            time: "2023-10-22",
+        },
+        {
+            txId: "51034szv",
+            user: "stevebower",
+            date: "How does the stock market work?",
+            token: "144",
+            type: "Finance",
+            time: "2023-10-20",
+        },
+
+
+
+    ];
+
+
+
+    // const lineData = [
+    //     [
+    //         { type: "number", label: "Response Time" },
+    //         { id: "i0", type: "number", role: "interval" },
+    //         { id: "i1", type: "number", role: "interval" },
+
+    //     ],
+    //     [1, 25.61, 27.34, 32.10, 30.94, 28.71, 27.24, 31.25, 29.10],
+    //     [2, 25.61, 27.34, 32.10, 30.94, 28.71, 27.24, 31.25, 29.10],
+
+    // ];
+
+
+
+    const lineData = [
+        ["Response Time", "Response Time in Seconds- All Models",],
+        ["", 32.61], ["", 6.77], ["", 31.27], ["", 7.42], ["", 27.92], ["", 26.17], ["", 28.32], ["", 29.24], ["", 9.30], ["", 8.14,], ["", 27.72], ["", 30.14], ["", 7.22],
+    ];
+
+
+
+    const lineOptions = {
+        title: "Response Performance",
+        curveType: "function",
+        legend: { position: "bottom" },
+    };
 
     const handleAutoSend = async (data) => {
         console.log("inside auto method", data)
@@ -340,7 +446,7 @@ const Dashboard = () => {
     return (
 
 
-        <Stack height="100%" maxHeight="100vh" width="100%" flex={1}>
+        <Stack height={window.innerHeight} maxHeight={window.innerHeight} width="100%" flex={1} sx={{ overflowY: "scroll" }}>
 
 
 
@@ -383,7 +489,7 @@ const Dashboard = () => {
                 </Box>
                 {/* <Messages messages={messages} isLoading={isLoading} /> */}
 
-                <Box m="20px">
+                <Box marginLeft="20px" marginRight="20px"  >
                     {/* HEADER */}
                     {/* <Box display="flex" justifyContent="space-between" alignItems="center">
                         <Header title="" subtitle="Welcome to your dashboard" />
@@ -410,6 +516,7 @@ const Dashboard = () => {
                         gridTemplateColumns="repeat(12, 1fr)"
                         gridAutoRows="100px"
                         gap="10px"
+                        mb={3}
                     >
                         {/* ROW 1 */}
                         <Box
@@ -473,8 +580,261 @@ const Dashboard = () => {
                         </Box>
 
                         {/* ROW 2 */}
+                        <Box
+                            sx={{
+                                gridColumn: "span 12",
+                                gridRow: "span 4",
+                                backgroundColor: colors.primary[400],
+
+
+
+                            }}
+
+                        >
+                            <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                <Typography
+                                    variant="h5"
+                                    fontWeight="400"
+                                    color={colors.grey[100]}
+                                    paddingLeft={3}
+                                    paddingTop={3}
+                                >
+                                    Token Utilization
+                                </Typography>
+                                <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                    <DemoContainer
+                                        components={[
+                                            'DatePicker',
+                                        ]}
+                                        sx={{
+                                            paddingRight: 3,
+                                            paddingTop: 2,
+
+                                        }}
+                                    >
+
+                                        <DemoItem label="" sx={{ height: "45px" }}>
+                                            <DatePicker defaultValue={dayjs('2023-10-17')} />
+                                        </DemoItem>
+
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </Box>
+
+
+                            <Box
+                                mt="25px"
+                                p="0 30px"
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="space-between"
+                                flexDirection={"column"}
+                                paddingBottom="25px"
+
+                            >
+
+
+
+                                <Box sx={{ display: "flex", flexDirection: "row", }}>
+
+                                    <Box mt="-2%" sx={{ borderRadius: 2, borderColor: "grey.500", border: 1, backgroundColor: "#fff", height: "320px", maxHeight: "auto", width: window.innerWidth / 6, maxWidth: window.innerWidth / 4, display: "flex", flexDirection: "column" }} p={2} >
+                                        <Typography
+                                            variant="h5"
+                                            fontWeight="500"
+                                            color={colors.grey[700]}
+                                        >
+                                            Total Tokens Used
+                                        </Typography>
+                                        <Box sx={{ display: "flex", flexDirection: "row" }} >
+                                            <Typography
+                                                variant="h5"
+                                                fontWeight="500"
+                                                color={"black"}
+                                                sx={{ marginTop: 2 }}
+
+                                            >
+                                                2793
+                                            </Typography>
+
+                                            <Box sx={{ backgroundColor: colors.redAccent[500], borderRadius: 1, display: "flex", flexDirection: "row", width: 75, maxWidth: 100, marginLeft: 4, height: "30px", alignItems: "center", justifyContent: "center" }} mt={2} p={0.4}>
+
+                                                <ArrowDownwardIcon fontSize="30px" sx={{ marginLeft: "3%", color: "#fff", }} />
+                                                <Typography
+                                                    variant="h9"
+                                                    fontStyle="italic"
+                                                    sx={{ color: "#fff", marginLeft: "1%" }}
+                                                >
+                                                    4%
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                        <Typography
+                                            variant="h8"
+                                            fontWeight="400"
+                                            color={colors.grey[800]}
+
+                                        >
+                                            From Oct 2023-Present
+                                        </Typography>
+                                        {/* <Box sx={{ display: "flex", marginTop: 3, marginBottom: 1, alignItems: "center", justifyContent: "center" }}>
+                                            <InsightsSharpIcon fontSize="large" sx={{ color: colors.greenAccent[400], }} />
+                                            <Box sx={{ backgroundColor: colors.redAccent[500], borderRadius: 1, display: "flex", flexDirection: "row", width: 75, maxWidth: 100, marginLeft: 2 }} p={0.5}>
+
+                                                <ArrowDownwardIcon fontSize="medium" sx={{ marginLeft: "3%", color: "#fff", }} /><Typography
+                                                    variant="h7"
+                                                    fontStyle="italic"
+                                                    sx={{ color: "#fff", marginLeft: "1%" }}
+                                                >
+                                                    4%
+                                                </Typography>
+                                            </Box>
+                                        </Box> */}
+                                        <Typography
+                                            variant="h6"
+                                            fontWeight="400"
+                                            color={"black"}
+                                            sx={{ marginTop: 2 }}
+
+                                        >
+                                            1100
+                                        </Typography>
+                                        <Typography
+                                            variant="h8"
+                                            fontWeight="400"
+                                            color={colors.grey[800]}
+
+                                        >
+                                            Input Tokens
+                                        </Typography>
+
+                                        <Typography
+                                            variant="h6"
+                                            fontWeight="400"
+                                            color={"black"}
+                                            sx={{ marginTop: 2 }}
+
+                                        >
+                                            1893
+                                        </Typography>
+                                        <Typography
+                                            variant="h8"
+                                            fontWeight="400"
+                                            color={colors.grey[800]}
+
+                                        >
+                                            Output Tokens
+                                        </Typography>
+                                    </Box>
+
+                                    <Box sx={{ marginLeft: "2%", padding: 2 }} mt="4px" >
+
+                                        <Chart
+                                            chartType="PieChart"
+                                            data={pieData}
+                                            options={pieOptions}
+                                            width="100%"
+                                            height="230px"
+                                            maxHeight="auto"
+
+
+                                        />
+                                    </Box>
+
+                                    <Box sx={{ padding: 2 }} mt="4px"  >
+
+                                        <Chart
+                                            chartType="LineChart"
+                                            data={lineData}
+                                            options={lineOptions}
+                                            width="100%"
+                                            height="230px"
+                                            maxHeight="auto"
+                                        />
+                                    </Box>
+
+
+                                </Box>
+                            </Box>
+                        </Box>
 
                         {/* ROW 3 */}
+
+                        <Box
+                            gridColumn="span 12"
+                            gridRow="span 3"
+                            backgroundColor={colors.primary[400]}
+                            overflow="auto"
+
+                        >
+                            <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                borderBottom={`4px solid ${colors.primary[500]}`}
+                                colors={colors.grey[100]}
+                                p="15px"
+                            >
+                                <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+                                    Recent Chats
+                                </Typography>
+                                <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+                                    Chat Name
+                                </Typography>
+
+                                <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+                                    Token Used
+                                </Typography>
+                            </Box>
+                            {mockTransactions.map((transaction, i) => (
+                                <Box
+                                    key={`${transaction.txId}-${i}`}
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    borderBottom={`4px solid ${colors.primary[500]}`}
+                                    p="15px"
+                                >
+                                    <Box>
+                                        <Typography
+                                            // color={colors.greenAccent[500]}
+                                            color={'rgba(74, 37, 225, 1)'}
+                                            variant="h5"
+                                            fontWeight="600"
+                                        >
+                                            {transaction.txId}
+                                        </Typography>
+                                        <Typography color={colors.grey[100]}>
+                                            {transaction.user}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ alignItems: "center", textAlign: "center", justifyContent: "center" }}>
+                                        <Typography
+                                            // color={colors.greenAccent[500]}
+                                            color={'rgba(74, 37, 225, 1)'}
+                                            variant="h5"
+                                            fontWeight="600"
+                                        >
+                                            {transaction.date.substring(0, 25)}...
+                                        </Typography>
+                                        <Typography variant="h7" color={colors.grey[500]} >
+                                            {transaction.type}{" "}
+                                            {" "}{" "}{transaction.time}
+
+                                        </Typography>
+                                    </Box>
+
+
+                                    <Box
+                                        backgroundColor={"red"}
+                                        p="5px 10px"
+                                        borderRadius="4px"
+                                    >
+                                        {transaction.token}
+                                    </Box>
+                                </Box>
+                            ))}
+                        </Box>
+
 
                     </Box>
                 </Box>

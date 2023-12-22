@@ -7,6 +7,8 @@ import reportWebVitals from "./reportWebVitals";
 
 // contexts
 import SettingsProvider from "./contexts/SettingsContext";
+import ThemeProvider from "./theme/index";
+import MainPage from "./MainPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -14,9 +16,12 @@ root.render(
   <React.StrictMode>
     <HelmetProvider>
       <SettingsProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <ThemeProvider>
+          <MainPage />
+        </ThemeProvider>
+
+
+
       </SettingsProvider>
     </HelmetProvider>
   </React.StrictMode>
